@@ -1,0 +1,17 @@
+{
+  "name": "creativestyle/magesuite-s3-media-listing",
+  "description": "Native S3 API implementation for media picker",
+  "type": "magento2-module",
+  "homepage": "https://creativestyle.de",
+  "license": "OSL-3.0",
+  "require": {
+  },
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "MageSuite\\S3MediaListing\\": ""
+    }
+  }
+}
