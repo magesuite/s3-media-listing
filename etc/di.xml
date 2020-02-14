@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Cms\Model\Wysiwyg\Images\Storage">
+        <plugin
+                name="images_storage_s3_adapter"
+                type="MageSuite\S3MediaListing\Plugin\Model\Wysiwyg\Images\Storage\S3Adapter"
+                sortOrder="10"
+        />
+    </type>
+</config>

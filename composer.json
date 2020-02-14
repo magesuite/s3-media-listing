@@ -5,6 +5,7 @@
   "homepage": "https://creativestyle.de",
   "license": "OSL-3.0",
   "require": {
+    "aws/aws-sdk-php": "^3.133"
   },
   "autoload": {
     "files": [
