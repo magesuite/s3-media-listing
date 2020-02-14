@@ -147,6 +147,11 @@ class S3Adapter
                 $item->setShortName($this->cmsWysiwygImages->getShortFilename($item->getBasename()));
                 $item->setUrl($this->cmsWysiwygImages->getCurrentUrl() . $item->getBasename());
                 $item->setSize($file['Size']);
+                $item->setLastModifiedDate(null);
+
+                if(isset($file['LastModified'])) {
+                    $item->setLastModifiedDate($file['LastModified']);
+                }
 
                 if ($subject->isImage($item->getBasename())) {
                     $thumbUrl = $this->getThumbnailUrl($item->getFilename(), true);
@@ -164,6 +169,8 @@ class S3Adapter
             }
         }
 
+        $collection = $this->sortByLastModifiedDate($collection);
+
         return $collection;
     }
 
@@ -177,9 +184,16 @@ class S3Adapter
     public function getS3Client()
     {
         if($this->s3Client == null) {
+            $profile = 'default';
+            $path = '/home/magento2/.aws/credentials';
+
+            $provider = \Aws\Credentials\CredentialProvider::ini($profile, $path);
+            $provider = \Aws\Credentials\CredentialProvider::memoize($provider);
+
             $this->s3Client = new \Aws\S3\S3Client([
                 'version' => 'latest',
-                'region' => $this->configuration->getAwsRegion()
+                'region' => $this->configuration->getAwsRegion(),
+                'credentials' => $provider
             ]);
         }
 
@@ -259,5 +273,25 @@ class S3Adapter
     public function getBucketName() : string
     {
         return $this->configuration->getS3BucketName();
+    }
+
+    public function sortByLastModifiedDate($collection) {
+        $items = $collection->getItems();
+
+        usort($items, function($a, $b) {
+            if($a->getLastModifiedDate() == $b->getLastModifiedDate()) {
+                return 0;
+            }
+
+            return $a->getLastModifiedDate() < $b->getLastModifiedDate() ? 1 : -1;
+        });
+
+        $collection->clear();
+
+        foreach($items as $item) {
+            $collection->addItem($item);
+        }
+
+        return $collection;
     }
 }
