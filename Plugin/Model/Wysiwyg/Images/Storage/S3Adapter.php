@@ -155,7 +155,7 @@ class S3Adapter
 
                 if ($subject->isImage($item->getBasename())) {
                     $thumbUrl = $this->getThumbnailUrl($item->getFilename(), true);
-                    // generate thumbnail "on the fly" if it does not exists
+
                     if (!$thumbUrl) {
                         $thumbUrl = $this->backendUrl->getUrl('cms/*/thumbnail', ['file' => $item->getId()]);
                     }
@@ -184,16 +184,9 @@ class S3Adapter
     public function getS3Client()
     {
         if($this->s3Client == null) {
-            $profile = 'default';
-            $path = '/home/magento2/.aws/credentials';
-
-            $provider = \Aws\Credentials\CredentialProvider::ini($profile, $path);
-            $provider = \Aws\Credentials\CredentialProvider::memoize($provider);
-
             $this->s3Client = new \Aws\S3\S3Client([
                 'version' => 'latest',
-                'region' => $this->configuration->getAwsRegion(),
-                'credentials' => $provider
+                'region' => $this->configuration->getAwsRegion()
             ]);
         }
 
