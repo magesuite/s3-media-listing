@@ -4,7 +4,7 @@
         <plugin
                 name="images_storage_s3_adapter"
                 type="MageSuite\S3MediaListing\Plugin\Model\Wysiwyg\Images\Storage\S3Adapter"
-                sortOrder="10"
+                sortOrder="20"
         />
     </type>
 </config>
