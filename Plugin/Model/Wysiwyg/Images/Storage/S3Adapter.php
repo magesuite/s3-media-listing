@@ -263,7 +263,7 @@ class S3Adapter
     /**
      * @return string
      */
-    public function getBucketName() : string
+    public function getBucketName()
     {
         return $this->configuration->getS3BucketName();
     }
