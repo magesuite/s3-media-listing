@@ -7,4 +7,12 @@
                 sortOrder="20"
         />
     </type>
+
+    <type name="Magento\Cms\Block\Adminhtml\Wysiwyg\Images\Tree">
+        <plugin
+            name="disable_subdirectories_detection"
+            type="MageSuite\S3MediaListing\Plugin\Cms\Block\Adminhtml\Wysiwyg\Images\Tree\DisableSubdirectoriesDetection"
+            sortOrder="10"
+        />
+    </type>
 </config>

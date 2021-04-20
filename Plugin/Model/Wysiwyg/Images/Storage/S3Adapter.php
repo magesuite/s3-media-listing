@@ -110,7 +110,9 @@ class S3Adapter
 
     public function aroundGetFilesCollection(\Magento\Cms\Model\Wysiwyg\Images\Storage $subject, callable $proceed, $path, $type = null)
     {
-        if(empty($this->getBucketName())) {
+        $bucketName = $this->getBucketName();
+
+        if(empty($bucketName)) {
             return $proceed($path, $type);
         }
 
@@ -119,7 +121,7 @@ class S3Adapter
         $s3Client = $this->getS3Client();
 
         $results = $s3Client->getPaginator('ListObjects', [
-            'Bucket' => $this->getBucketName(),
+            'Bucket' => $bucketName,
             'Prefix' => $pathInBucket,
             'Delimiter' => '/'
         ]);
@@ -188,6 +190,19 @@ class S3Adapter
                 'version' => 'latest',
                 'region' => $this->configuration->getAwsRegion()
             ]);
+            
+            /*
+            For testing on local environment replace above with:
+            $this->s3Client = new \Aws\S3\S3Client([
+                'profile' => 'creativeshop',
+                'version' => 'latest',
+                'region' => $this->configuration->getAwsRegion()
+            ]);
+            put credentials into ~/.aws/credentials and change "profile" to one defined in above file
+            more info here: https://docs.aws.amazon.com/sdk-for-php/v3/developer-guide/guide_credentials_profiles.html
+            DO NOT PUSH IT TO REPOSITORY
+            after testing revert to original and only then push
+            */
         }
 
         return $this->s3Client;
