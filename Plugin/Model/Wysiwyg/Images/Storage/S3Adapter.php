@@ -4,7 +4,7 @@ namespace MageSuite\S3MediaListing\Plugin\Model\Wysiwyg\Images\Storage;
 
 class S3Adapter
 {
-    protected \Magento\Framework\Filesystem\Io\File $file;
+    protected \Magento\Framework\Filesystem\Io\File $ioFileSystem;
     protected \Magento\Framework\Filesystem $filesystem;
     protected \Magento\Framework\Data\CollectionFactory $dataCollectionFactory;
     protected \Magento\Cms\Helper\Wysiwyg\Images $cmsWysiwygImages;
@@ -12,10 +12,11 @@ class S3Adapter
     protected \Magento\Backend\Model\UrlInterface $backendUrl;
     protected \MageSuite\S3MediaListing\Helper\Configuration $configuration;
     protected array $thumbsCache = [];
-    protected \Aws\S3\S3Client $s3Client;
+    /** @var \Aws\S3\S3Client  */
+    protected $s3Client;
 
     public function __construct(
-        \Magento\Framework\Filesystem\Io\File $file,
+        \Magento\Framework\Filesystem\Io\File $ioFileSystem,
         \Magento\Framework\Filesystem $filesystem,
         \Magento\Framework\Data\CollectionFactory $dataCollectionFactory,
         \Magento\Cms\Helper\Wysiwyg\Images $cmsWysiwygImages,
@@ -23,7 +24,7 @@ class S3Adapter
         \Magento\Backend\Model\UrlInterface $backendUrl,
         \MageSuite\S3MediaListing\Helper\Configuration $configuration
     ) {
-        $this->file = $file;
+        $this->ioFileSystem = $ioFileSystem;
         $this->filesystem = $filesystem;
         $this->dataCollectionFactory = $dataCollectionFactory;
         $this->cmsWysiwygImages = $cmsWysiwygImages;
@@ -46,7 +47,7 @@ class S3Adapter
             'isDirectoryAllowed'
         );
         $isDirectoryAllowed->setAccessible(true);
-        
+
         $mediaDirectoryPath = $this->getMediaDirectoryPath();
         $pathInBucket = $this->getPathInBucket($path);
         $s3Client = $this->getS3Client();
@@ -61,7 +62,7 @@ class S3Adapter
 
         $id = 1;
         foreach ($results as $result) {
-            if (!isset($result['CommonPrefixes']) || $result['CommonPrefixes'] == null) {
+            if (empty($result['CommonPrefixes'])) {
                 continue;
             }
 
@@ -228,7 +229,7 @@ class S3Adapter
 
     public function thumbExists($path)
     {
-        $directory = $this->file->dirname($path);
+        $directory = $this->ioFileSystem->dirname($path);
 
         if (!isset($this->thumbsCache[$directory])) {
             $this->thumbsCache[$directory] = [];
@@ -267,15 +268,7 @@ class S3Adapter
     public function sortByLastModifiedDate($collection)
     {
         $items = $collection->getItems();
-
-        usort($items, function ($a, $b) {
-            if ($a->getLastModifiedDate() == $b->getLastModifiedDate()) {
-                return 0;
-            }
-
-            return $a->getLastModifiedDate() < $b->getLastModifiedDate() ? 1 : -1;
-        });
-
+        usort($items, [$this, 'compareItemsModifiedDate']);
         $collection->clear();
 
         foreach ($items as $item) {
@@ -283,5 +276,12 @@ class S3Adapter
         }
 
         return $collection;
+    }
+
+    protected function compareItemsModifiedDate(
+        \Magento\Framework\DataObject $itemA,
+        \Magento\Framework\DataObject $itemB
+    ) {
+        return $itemA->getLastModifiedDate() <=> $itemB->getLastModifiedDate();
     }
 }
