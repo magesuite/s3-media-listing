@@ -28,8 +28,7 @@ class DisableSubdirectoriesDetection
         \Magento\Cms\Helper\Wysiwyg\Images $cmsWysiwygImages,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Serialize\Serializer\Json $serializer
-    )
-    {
+    ) {
         $this->cmsWysiwygImages = $cmsWysiwygImages;
         $this->registry = $registry;
         $this->serializer = $serializer;
@@ -38,8 +37,7 @@ class DisableSubdirectoriesDetection
     public function aroundGetTreeJson(
         \Magento\Cms\Block\Adminhtml\Wysiwyg\Images\Tree $subject,
         callable $proceed
-    )
-    {
+    ) {
         $storageRoot = $this->cmsWysiwygImages->getStorageRoot();
 
         $collection = $this->registry

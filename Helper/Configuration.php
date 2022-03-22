@@ -15,8 +15,7 @@ class Configuration extends \Magento\Framework\App\Helper\AbstractHelper
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfigInterface
-    )
-    {
+    ) {
         parent::__construct($context);
 
         $this->scopeConfig = $scopeConfigInterface;
