@@ -141,8 +141,7 @@ class S3Adapter
                 }
 
                 if ($subject->isImage($item->getBasename())) {
-                    $thumbUrl = $this->getThumbnailUrl($item->getFilename(), true) ?:
-                        $this->backendUrl->getUrl('cms/*/thumbnail', ['file' => $item->getId()]);
+                    $thumbUrl = $this->cmsWysiwygImages->getCurrentUrl() . $item->getBasename();
                 } else {
                     $thumbUrl = $this->assetRepository->getUrl(
                         \Magento\Cms\Model\Wysiwyg\Images\Storage::THUMB_PLACEHOLDER_PATH_SUFFIX
