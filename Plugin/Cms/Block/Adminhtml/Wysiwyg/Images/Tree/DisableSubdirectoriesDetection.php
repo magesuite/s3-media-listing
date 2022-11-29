@@ -40,9 +40,11 @@ class DisableSubdirectoriesDetection
     ) {
         $storageRoot = $this->cmsWysiwygImages->getStorageRoot();
 
+        $currentPath = $this->cmsWysiwygImages->getCurrentPath();
+
         $collection = $this->registry
             ->registry('storage')
-            ->getDirsCollection($this->cmsWysiwygImages->getCurrentPath());
+            ->getDirsCollection($currentPath);
 
         $jsonArray = [];
 
@@ -52,6 +54,7 @@ class DisableSubdirectoriesDetection
                 'id' => $this->cmsWysiwygImages->convertPathToId($item->getFilename()),
                 'path' => substr($item->getFilename(), strlen($storageRoot)),
                 'cls' => 'folder',
+                'children' => true
             ];
 
             $jsonArray[] = $data;
